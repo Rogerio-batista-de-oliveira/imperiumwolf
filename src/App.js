@@ -1,55 +1,64 @@
-import React, { useState } from 'react';
-import { supabase } from './supabaseClient';
-import './App.css'; // << VERIFIQUE SE ESTA LINHA ESTÁ AQUI
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Componentes Globais
+import Navbar from "./components/Navbar"; 
+import ScrollToTop from "./components/ScrollToTop"; // Reseta o scroll ao mudar de página
+import WhatsAppButton from "./components/WhatsAppButton"; // Botão de contato direto
+
+// Importando as páginas
+import Home from "./pages/Home";
+import Admin from "./pages/Admin";
+import Contato from "./pages/Contato";
+import Portifolio from "./pages/Portifolio"; 
+import Sobre from "./pages/Sobre"; 
+import Carreira from "./pages/Carreira"; 
+
+// Configurações Globais
+import "./i18n"; 
+import "./App.css";
 
 function App() {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [mensagem, setMensagem] = useState('');
-
-  const enviarMensagem = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase
-      .from('contatos')
-      .insert([{ nome, email, mensagem }]);
-
-    if (error) {
-      alert("Erro ao enviar: " + error.message);
-    } else {
-      alert("Mensagem enviada com sucesso para a Imperium Wolf!");
-      setNome(''); setEmail(''); setMensagem('');
-    }
-  };
-
   return (
-    <div className="container"> {/* << ADICIONEI ESTA CLASSE */}
-      <h1>Imperium Wolf</h1>
-      <p style={{ textAlign: 'center', color: '#666' }}>Software House & Soluções Digitais</p>
-      
-      <form onSubmit={enviarMensagem}>
-        <input 
-          placeholder="Seu Nome" 
-          value={nome} 
-          onChange={(e) => setNome(e.target.value)} 
-          required 
-        />
-        <input 
-          type="email" 
-          placeholder="Seu melhor E-mail" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          required 
-        />
-        <textarea 
-          placeholder="Como podemos ajudar a sua empresa?" 
-          value={mensagem} 
-          rows="4"
-          onChange={(e) => setMensagem(e.target.value)} 
-          required 
-        />
-        <button type="submit">Solicitar Orçamento Grátis</button>
-      </form>
-    </div>
+    <Router>
+      {/* Reseta o scroll para o topo em cada transição de rota */}
+      <ScrollToTop /> 
+
+      <div className="App bg-[#020617] min-h-screen flex flex-col">
+        {/* Navbar Global com Logo e Tradução */}
+        <Navbar /> 
+
+        <main className="flex-grow">
+          <Routes>
+            {/* Rota Principal: ROI & Estratégia */}
+            <Route path="/" element={<Home />} />
+            
+            {/* Painel Administrativo de Leads */}
+            <Route path="/admin" element={<Admin />} />
+            
+            {/* Contato de Negócios */}
+            <Route path="/contato" element={<Contato />} />
+            
+            {/* Portfólio de Engenharia */}
+            <Route path="/portifolio" element={<Portifolio />} />
+            
+            {/* Sobre a Imperium Wolf */}
+            <Route path="/sobre" element={<Sobre />} />
+
+            {/* Recrutamento e Currículos */}
+            <Route path="/carreira" element={<Carreira />} />
+          </Routes>
+        </main>
+
+        {/* Canal de Resposta Rápida (WhatsApp) */}
+        <WhatsAppButton />
+
+        {/* Footer Executivo */}
+        <footer className="py-12 text-center text-slate-600 bg-[#020617] border-t border-white/5 text-[10px] font-black tracking-[0.3em] uppercase">
+          © 2026 Imperium Wolf // Digital Intelligence & Global Strategy
+        </footer>
+      </div>
+    </Router>
   );
 }
 
